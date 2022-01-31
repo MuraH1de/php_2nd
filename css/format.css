@@ -1,0 +1,116 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+body {
+  font-family: 'Open Sans', helvetica, arial, sans-serif;
+  max-width: 800px;
+  margin: 3rem auto 0;
+  line-height: 1.6;
+  color: #444;
+}
+
+h1{
+  font-size: 140%;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h2{
+  font-size: 120%;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h3{
+  font-size: 100%;
+  font-weight: bold;
+  text-align: center;
+}
+
+a{
+  font-size: 100%;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+.select_button{
+  display:flex;
+  flex-wrap:wrap;
+}
+
+input[type="radio"]{
+  display: none;
+}
+
+.label-event{
+  display: inline-block;
+  margin: 5px;
+  text-align: center;
+  border-radius: 5px;
+  width: 180px;
+  height: 45px;
+  font-size: 90%;
+  font-weight: bold;
+}
+
+.select_button label{
+  border: 1px solid #1e90ff;
+  color: #1e90ff;
+  background-color: #fff;
+  line-height: 45px;
+}
+
+.select_button label:hover {
+  background-color: #1e90ff;
+  color: white;
+}
+
+.select_button input[type="radio"]:checked + label{
+  background-color: #1e90ff;
+  color: white;
+}
+
+button{
+  margin-top: 20px;
+  font-weight: bold;
+  line-height: 45px;
+  width: 180px;
+}
+
+.q_add{
+  text-align: center;
+}
+
+
+textarea{
+  width: 400px;
+}
+
+.result{
+  text-align: center;
+}
+
+.com_oya{
+  display: flex;
+  flex-wrap:wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.comment{
+  display: block;
+  text-align: center;
+  border: 2px;
+  border-color: #444;
+  width: 500px;
+  background: #fffacd;
+  line-height: 100%;
+  margin: 10px 0 20px 0;
+  padding-bottom: 16px;
+} 
+
+.ans_img{
+  margin-bottom: 30px;
+}
