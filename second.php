@@ -1,30 +1,30 @@
 <?php
     //前ページからデータ取得
-    $event = $_POST['event'];
-    echo $event.'<br />';
+    $event_name = $_POST['event'];
+    echo $event_name.'<br />';
 
     //id割り振り
-    if ($event == "freestyle")  {$event_name = "スキーフリースタイル"; $event_no=1;}
-    elseif($event == "alpen")   {$event_name = "スキーアルペン"; $event_no=2;}
-    elseif($event == "ccs" )    {$event_name = "スキークロスカントリー"; $event_no=3;}
-    elseif($event == "jump")    {$event_name = "スキージャンプ"; $event_no=4;}
-    elseif($event == "nordic")  {$event_name = "ノルディック複合"; $event_no=5;}
-    elseif($event == "figure")  {$event_name = "フィギュアスケート"; $event_no=6;}
-    elseif($event == "st")      {$event_name = "ショートトラック"; $event_no=7;}
-    elseif($event == "sskate")  {$event_name = "スピードスケート"; $event_no=8;}
-    elseif($event == "sb")      {$event_name = "スノーボード"; $event_no=9;}
-    elseif($event == "ih")      {$event_name = "アイスホッケー"; $event_no=10;}
-    elseif($event == "curling") {$event_name = "カーリング"; $event_no=11;}
-    elseif($event == "biaslon") {$event_name = "バイアスロン"; $event_no=12;}
-    elseif($event == "skelton") {$event_name = "スケルトン"; $event_no=13;}
-    elseif($event == "luge")    {$event_name = "リュージュ"; $event_no=14;}
-    elseif($event == "bb")      {$event_name = "ボブスレー"; $event_no=15;}
-    else                        {$event_name = "特にない"; $event_no=16;}
+    if ($event_name == "freestyle")  {$event_jp = "スキーフリースタイル"; $event_no=1;}
+    elseif($event_name == "alpen")   {$event_jp = "スキーアルペン"; $event_no=2;}
+    elseif($event_name == "ccs" )    {$event_jp = "スキークロスカントリー"; $event_no=3;}
+    elseif($event_name == "jump")    {$event_jp = "スキージャンプ"; $event_no=4;}
+    elseif($event_name == "nordic")  {$event_jp = "ノルディック複合"; $event_no=5;}
+    elseif($event_name == "figure")  {$event_jp = "フィギュアスケート"; $event_no=6;}
+    elseif($event_name == "st")      {$event_jp = "ショートトラック"; $event_no=7;}
+    elseif($event_name == "sskate")  {$event_jp = "スピードスケート"; $event_no=8;}
+    elseif($event_name == "sb")      {$event_jp = "スノーボード"; $event_no=9;}
+    elseif($event_name == "ih")      {$event_jp = "アイスホッケー"; $event_no=10;}
+    elseif($event_name == "curling") {$event_jp = "カーリング"; $event_no=11;}
+    elseif($event_name == "biaslon") {$event_jp = "バイアスロン"; $event_no=12;}
+    elseif($event_name == "skelton") {$event_jp = "スケルトン"; $event_no=13;}
+    elseif($event_name == "luge")    {$event_jp = "リュージュ"; $event_no=14;}
+    elseif($event_name == "bb")      {$event_jp = "ボブスレー"; $event_no=15;}
+    else                             {$event_jp = "特にない"; $event_no=16;}
 
     echo $event_no.'<br />';
 
 
-    //DB接続します
+    //1. DB接続します
     try {
         //ID:'root', Password: 'root'
         $pdo = new PDO('mysql:dbname=olympic_qa;charset=utf8;host=localhost','root','root');
@@ -34,20 +34,38 @@
         exit('DBConnectError:'.$e->getMessage());
     }
     
-    //２．データ取得
-    //$stmt = $pdo->prepare("SELECT counter FROM event_table where id = 1");
-    $stmt = $pdo->prepare("SELECT * FROM event_table");
-    //$stmt->bindValue(':id', $event_no, PDO:: PARAM_INT);
+    //2. データ取得
+    $stmt = $pdo->prepare("SELECT counter FROM event_table WHERE id = :id");
+    //$stmt = $pdo->prepare("SELECT * FROM event_table");
+    $stmt->bindValue(':id', $event_no, PDO:: PARAM_INT);
     $status = $stmt->execute();
-    echo $status.'<br />';
-    echo $stmt.'<br />';
+    //echo 'STATUS->'.$status.'<br />';
+
+    //3. カウンタ
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $counter = $result["counter"] +1;
+    //echo 'DB->'.$counter.'<br />';
     
-    //データ更新
+    //4. データ更新
+    $stmt = $pdo->prepare("UPDATE  event_table SET counter = :counter WHERE id = :id");
+    $stmt->bindValue(':counter', $counter, PDO:: PARAM_INT);
+    $stmt->bindValue(':id', $event_no, PDO:: PARAM_INT);
+    $status = $stmt->execute();
 
+    //5. データ表示
+    $stmt = $pdo->prepare("SELECT * FROM event_table");
+    $status = $stmt->execute();
 
+    $view = "";
+    while( $result = $stmt->fetch(PDO::FETCH_ASSOC)){
+        $view .= '<p>';
+        $view .= $result["event_name"] ."︓". $result["counter"] ;
+        $view .= '</p>';
+    }
+    //echo 'DB->'.$view.'<br />';
 
-
-
+    //6. ソート
+    
 
 
 
@@ -73,6 +91,26 @@
     <link rel='stylesheet' href='css/format.css'>
 </head>
 <body>
+    <form action='result.php' method="post">
+        <div class="q_add">
+            <h1>アンケート回答ありがとうございます！</h1>
+            <h2>あなたが選んだ競技種目は「<?= $event_jp; ?>」です。<br>
+                人気順位は<?= $class; ?>位です。</h2>
+            <img src="img/<?= $event_name; ?>.png" alt="test" class="ans_img"><br>
 
+
+            <h3>冬のオリンピックで印象に残っているものがあれば記入してください。</h3>
+            <textarea name='omoide' id=''></textarea>
+
+            <h3>あなたのニックネームを記入してください。</h3>
+            <textarea name='nickname' id=''></textarea>
+
+            <h3>あなたのメールアドレスを記入してください。</h3>
+            <textarea name='mailaddress' id=''></textarea>
+            <br>
+
+            <button type="submit">送信！</button>
+        </div>
+    </form>
 </body>
 </html>
