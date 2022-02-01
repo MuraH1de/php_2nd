@@ -1,7 +1,7 @@
 <?php
     //前ページからデータ取得
     $event_name = $_POST['event'];
-    echo $event_name.'<br />';
+    //echo $event_name.'<br />';
 
     //id割り振り
     if ($event_name == "freestyle")  {$event_jp = "スキーフリースタイル"; $event_no=1;}
@@ -21,7 +21,7 @@
     elseif($event_name == "bb")      {$event_jp = "ボブスレー"; $event_no=15;}
     else                             {$event_jp = "特にない"; $event_no=16;}
 
-    echo $event_no.'<br />';
+    //echo $event_no.'<br />';
 
 
     //1. DB接続します
@@ -57,23 +57,46 @@
     $status = $stmt->execute();
 
     $view = "";
+    $i = 0;
     while( $result = $stmt->fetch(PDO::FETCH_ASSOC)){
+        //var_dump($result);
+        //echo '<br />';
+        $sort_data[$i] = $result; 
+
         $view .= '<p>';
         $view .= $result["event_name"] ."︓". $result["counter"] ;
         $view .= '</p>';
+        $i += 1;
     }
-    //echo 'DB->'.$view.'<br />';
+    // var_dump($sort_data);
+    // echo '<br />';
 
-    //6. ソート
-    
+    //6. ソート(DBを配列に入れてソートしている)
+    foreach($sort_data as $key => $value)
+    {
+        $sort_keys[$key] = intval($sort_data[$key]["counter"]);
+        //echo intval($sort_data[$key]["counter"]).'<br />';
+    }
+    array_multisort($sort_keys, SORT_DESC, $sort_data);
+    // var_dump($sort_data);
+    // echo '<br />';
+    $num = 0;
+    while($num < 16){
+        //echo $sort_data[$num]["id"].'<br />';
+        if(intval($sort_data[$num]["id"]) == intval($event_no)){
+            //echo '条件一致<br />';
+            $class = $num + 1;
+            break;
+        }
+        $num += 1;
+    }
 
-
-
-
-
-
-
-
+    //4. answer_tableデータ追加
+    $stmt = $pdo->prepare("INSERT INTO answer_table(id, event_name, event_jp, event_no, omoide, nickname, mailaddress)VALUES(NULL, :event_name, :event_jp, :event_no, '', '', '')");
+    $stmt->bindValue(':event_name', $event_name, PDO:: PARAM_STR);
+    $stmt->bindValue(':event_jp', $event_jp, PDO:: PARAM_STR);
+    $stmt->bindValue(':event_no', $event_no, PDO:: PARAM_INT);
+    $status = $stmt->execute();
 
 
 
