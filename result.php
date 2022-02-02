@@ -58,9 +58,10 @@
     while( $result = $stmt->fetch(PDO::FETCH_ASSOC)){
         //var_dump($result);
         //echo '<br />';
-        $comment .= '<p>';
+        //$comment .= '<p>';
         $comment .= $result["omoide"];
-        $comment .= '</p>';
+        //$comment .= '</p>';
+        $comment .= '<br>';
     }
     
     
@@ -83,12 +84,13 @@
 </head>
 <body>
     <div class="result">
+        <h1><?= $nickname; ?>さん　アンケート回答ありがとうございます！</h1>
         <h2>現在の回答数は、<?= $ans_all["count(*)"]; ?>件です。<br>
         <?= $event_jp; ?>を選んだ回答は、<?= $eve_c["count(*)"]; ?>件です。<br>
         </h2>
         <img src="img/<?= $event_name; ?>.png" alt="test" class="ans_img"><br>
         
-        <h3>こんな思い出の回答をもらっています。</h3>
+        <h3>他にはこのような回答をもらっています。</h3>
         <div class="com_oya">
             <p class="comment"><?= $comment; ?></p>
         </div>
